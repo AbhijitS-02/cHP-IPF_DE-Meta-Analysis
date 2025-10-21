@@ -5,12 +5,9 @@
 #######################################
 
 
-# Set working directory
-setwd("C:/IIT KGP/Method2/FINM_v2")
-
 #Import libraries
 library(tidyverse)
-
+library(here)
 
 ## RNA-seq datasets and sample size of each dataset.
 datasets <- c("GSE184316", "GSE150910_biopsy", "GSE150910_explant")          
@@ -18,12 +15,12 @@ n_samp <- c(76, 62, 123)
 sig_cutoff <- 1e-16       # the lower limit of system cutoff for a number.
 
 # Import all the required datasets
-GSE184316.degs <- read.csv("./data/GSE184316/GSE184316_HPvsIPF_deseq2_results.csv", header = TRUE)
+GSE184316.degs <- read.csv(here("data", "GSE184316", "GSE184316_HPvsIPF_deseq2_results.csv"), header = TRUE)
 
-GSE150910.biopsy.degs <- read.csv("./data/GSE150910/GSE150910_CHPvsIPF(Biopsy)_deseq2_results.csv",
+GSE150910.biopsy.degs <- read.csv(here("data", "GSE150910", "GSE150910_CHPvsIPF(Biopsy)_deseq2_results.csv"), 
                                   header = TRUE)
 
-GSE150910.explant.degs <- read.csv("./data/GSE150910/GSE150910_CHPvsIPF(Explant)_deseq2_results.csv",
+GSE150910.explant.degs <- read.csv(here("data", "GSE150910", "GSE150910_CHPvsIPF(Explant)_deseq2_results.csv"),
                                    header = TRUE)
 
 
@@ -59,7 +56,8 @@ metaFIN <- function(study_1, study_2, study_3, n_samp, datasets){
     }
   }
   
-  write.csv(as.data.frame(sign), "./results/FINM_results/Sign.csv")
+  write.csv(as.data.frame(sign), here("results", "Sign.csv"))
+  
   ### Calculation of Ng terms
   
   # Step 1 : Estimation of weights
@@ -84,7 +82,7 @@ metaFIN <- function(study_1, study_2, study_3, n_samp, datasets){
   colnames(weights) <- c("study_1", "study_2", "study_3")
   
   weights <- as.data.frame(weights, stringsAsFactors = FALSE)
-  write.csv(weights, file = "./results/FINM_results/weights.csv") #save weights as csv - optional
+  write.csv(weights, file = here("results", "weights.csv")) #save weights as csv - optional
   
   
   # Step 2 : Calculation of each term of Ng for a gene g
@@ -233,7 +231,8 @@ meta_FIN_results <- metaFIN(study_1 = study.1_GSE184316,
 meta_FIN_results <- meta_FIN_results %>%
   rownames_to_column(var = "Gene_symbol")
 
-write.csv(meta_FIN_results, "./results/FINM_results/FINM_Meta Analysis Results.csv", row.names = FALSE)
+
+write.csv(meta_FIN_results, here("results", "FINM_Meta Analysis Results.csv"), row.names = FALSE)
 
 ### Calculate average logFC for all the unique genes
 
@@ -311,14 +310,14 @@ meta_FINM_degs <- meta_FIN_results %>%
   filter(mean_abs_logfc >= 1 & metaFIN_padj < 0.05) %>%
   arrange(desc(ng))
 
-write.csv(meta_FINM_degs, "./results/FINM_results/FINM_significant DEGs.csv", row.names = FALSE) #export final DEG list
+write.csv(meta_FINM_degs, here("results", "FINM_significant DEGs.csv"), row.names = FALSE) #export final DEG list
 
 
 
 
 # Assess directionality of expression
 
-direction.expr <- read.csv("./results/FINM_results/Sign.csv")
+direction.expr <- read.csv(here("results", "Sign.csv"))
 
 # change the column names
 colnames(direction.expr) <- c("Gene_symbol", "GSE184316_dir", "GSE150910.biopsy_dir", "GSE150910.explant_dir", 
@@ -344,4 +343,4 @@ filter_genes_all_studies <- apply(directions, 1, function(row) {
 })
 
 common_genes_same_direction <- meta_FINM_degs[filter_genes_all_studies, ] #subset
-write.csv(common_genes_same_direction, "./results/FINM_results/Common_genes_same_direction_expr.csv", row.names = FALSE)
+write.csv(common_genes_same_direction, here("results", "Common_genes_same_direction_expr.csv"), row.names = FALSE)

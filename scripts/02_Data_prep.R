@@ -1,28 +1,28 @@
-## This is the alternate/third method of the pipeline (microarray dataset is removed from training data) and
-## included in validation dataset
 ## This script is to prepare the data for the machine learning models
 ## There are 380 genes with consistent direction across three studies
 
 ## There are 261 samples in total : HP (n = 118) + IPF (n = 143)
 ## ML dataset should be 261 samples x 380 genes for LASSO model
 
-# Set working directory
-setwd("C:/IIT KGP/Method4/ML_v4")
 
 # Import libraries
 library(tidyverse)
+library(here)
+library(ggplot2)
+library(reshape2)
+library(sva) # sva library has the Combat() function required for batch correction
 
 ### Load the expression/count matrices for all the datasets
 
 #Load normalized gene count data of GSE184316 
 ## vst() normalization done using DESeq2
-count.GSE184316 <- read.csv("C:/IIT KGP/Bulk RNA Seq data analysis pipelines/GSE184316/HPvsIPF/Normalized_count_HP_IPF_GSE184316.csv",
+count.GSE184316 <- read.csv(here("data", "GSE184316", "Normalized_count_HP_IPF_GSE184316.csv"),
                             header = TRUE) %>%
   column_to_rownames(., var = "X") # Convert the first column "X" (gene symbols) to row names
 
 
 # Load normalized gene count data of GSE150910 (includes both biopsy and explant samples)
-count.GSE150910 <- read.csv("C:/IIT KGP/Bulk RNA Seq data analysis pipelines/GSE150910/Normalized_count_HP_IPF_GSE150910.csv",
+count.GSE150910 <- read.csv(here("data", "GSE150910", "Normalized_count_HP_IPF_GSE150910.csv"),
                             header = TRUE) %>%
   column_to_rownames(., var = "X") # Convert the first column "X" (gene symbols) to row names
 
@@ -31,7 +31,7 @@ count.GSE150910 <- read.csv("C:/IIT KGP/Bulk RNA Seq data analysis pipelines/GSE
 ### Load and prepare the sample information data for all the datasets
 
 ## Sample info GSE184316: HP (n = 36) and IPF (n = 40)
-sample_info.GSE184316 <- read.csv("C:/IIT KGP/Bulk RNA Seq data analysis pipelines/GSE184316/HPvsIPF/Sample_information_HP_IPF_GSE184316.csv",
+sample_info.GSE184316 <- read.csv(here("data", "GSE184316", "Sample_information_HP_IPF_GSE184316.csv"),
                                   header = TRUE)
 
 sample_info.GSE184316 <- sample_info.GSE184316[, c(2,3)] #remove the first column named "X"
@@ -39,7 +39,7 @@ colnames(sample_info.GSE184316)[2] = "disease" #rename condition column to disea
 
 
 ## Sample info GSE150910: Explant (HP: n = 56, IPF: n = 67) and Biopsy (HP: n = 26, IPF: n = 36)
-sample_info.GSE150910 <- read.csv("C:/IIT KGP/Bulk RNA Seq data analysis pipelines/GSE150910/Sample_information_HP_IPF_GSE150910.csv",
+sample_info.GSE150910 <- read.csv(here("data", "GSE150910", "Sample_information_HP_IPF_GSE150910.csv"),
                                   header = TRUE)
 
 sample_info.GSE150910 <- sample_info.GSE150910[, c(2,3)] #remove the first column named "X"
@@ -59,8 +59,8 @@ all(sample_info.GSE150910$sample %in% colnames(count.GSE150910))#if TRUE, all th
 
 
 
-#Load the FINM results with the 88 genes having consistent direction in the 2 NGS datasets
-common_genes <- read.csv("C:/IIT KGP/Method2/FINM_v2/Common_genes_same_direction_expr.csv", header = TRUE)
+#Load the FINM results with the 380 genes having consistent direction in the 2 NGS datasets
+common_genes <- read.csv(here("results", "Common_genes_same_direction_expr.csv"), header = TRUE)
 
 
 
@@ -68,11 +68,11 @@ common_genes <- read.csv("C:/IIT KGP/Method2/FINM_v2/Common_genes_same_direction
 
 #GSE184316
 count.GSE184316 <- count.GSE184316[rownames(count.GSE184316) %in% common_genes$Gene_symbol, ]
-write.csv(count.GSE184316, "counts_GSE184316_HPvIPF_380genes.csv") #optional
+write.csv(count.GSE184316, here("results", "counts_GSE184316_HPvIPF_380genes.csv")) #optional
 
 #GSE150910
 count.GSE150910 <- count.GSE150910[rownames(count.GSE150910) %in% common_genes$Gene_symbol, ]
-write.csv(count.GSE150910, "counts_GSE150910_HPvIPF_380genes.csv") #optional
+write.csv(count.GSE150910, here("results", "counts_GSE150910_HPvIPF_380genes.csv")) #optional
 
 
 
@@ -113,19 +113,15 @@ sum(is.na(data_final)) # Should return 0
 
 colnames(data_final)[381] <- "disease_label"
 
-write.csv(data_final, "Data_final_v4.csv")
+write.csv(data_final, here("data", "Data_final_v4.csv"))
 
 ## HP (n = 118) + IPF (n = 143) = 261 samples x 380 genes
 
 
 
 
-
 ### PCA plot to check platform effects
 
-#Load libraries
-library(ggplot2)
-library(reshape2)
 
 # Only get the numerical values, excluding the last column i.e, disease labels
 expr_t <- data_final[,1:380]
@@ -164,7 +160,7 @@ pca_platform <- ggplot(pca_df, aes(x = PC1, y = PC2, color = Platform)) +
         panel.background = element_blank())
 
 print(pca_platform)
-ggsave("PCA_(before_combat)_Platform.png", pca_platform, dpi = 300, height = 6, width = 8)
+ggsave(filename = here("results", "PCA_(before_combat)_Platform.png"), pca_platform, dpi = 300, height = 6, width = 8)
 
 # Plot PC1 vs PC2 of disease
 pca_disease <- ggplot(pca_df, aes(x = PC1, y = PC2, color = disease)) +
@@ -179,14 +175,14 @@ pca_disease <- ggplot(pca_df, aes(x = PC1, y = PC2, color = disease)) +
         panel.background = element_blank())
 
 print(pca_disease)
-ggsave("PCA_(before_combat)_Disease.png", pca_disease, dpi = 300, height = 6, width = 8)
+ggsave(filename = here("results", "PCA_(before_combat)_Disease.png"), pca_disease, dpi = 300, height = 6, width = 8)
 
 
 
 
 
 ### Platform effect correction
-library(sva) # sva library has the Combat() function
+
 
 # Create pheno data
 pheno <- data.frame(disease = data_final$disease_label,
@@ -212,7 +208,7 @@ combat_expr <- ComBat(dat = as.matrix(expr_matrix),
 combat_expr <- as.data.frame(t(combat_expr)) #convert genes to columns and samples as rows
 combat_expr$disease_label <- data_final$disease_label #add disease label
 
-write.csv(combat_expr, "Data_Final_v4_platformcorrected.csv") #export
+write.csv(combat_expr, here("data", "Data_Final_v4_platformcorrected.csv")) #export
 
 
 
@@ -244,7 +240,7 @@ pca_platform <- ggplot(pca_df2, aes(x = PC1, y = PC2, fill = Platform)) +
         panel.background = element_blank())
 
 print(pca_platform)
-ggsave("PCA_(after_combat)_Platform.png", pca_platform, dpi = 300, height = 6, width = 8)
+ggsave(filename = here("results", "PCA_(after_combat)_Platform.png"), pca_platform, dpi = 300, height = 6, width = 8)
 
 # Plot PC1 vs PC2 after platform correction - separation based on disease
 pca_disease <- ggplot(pca_df2, aes(x = PC1, y = PC2, fill = disease)) +
@@ -258,7 +254,7 @@ pca_disease <- ggplot(pca_df2, aes(x = PC1, y = PC2, fill = disease)) +
         panel.background = element_blank())
 
 print(pca_disease)
-ggsave("PCA_(after_combat)_Disease.png", pca_disease, dpi = 300, height = 6, width = 8)
+ggsave(filename = here("results", "PCA_(after_combat)_Disease.png"), pca_disease, dpi = 300, height = 6, width = 8)
 
 # combat_expr is then used for machine learning model building
 # END
