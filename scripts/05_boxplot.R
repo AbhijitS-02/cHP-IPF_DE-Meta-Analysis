@@ -1,267 +1,59 @@
+library(ggplot2)
 library(ggpubr)
-
-##### 70-30 split
-
-top_predictor <- "ZNF443"
-
-
-
-train_expr <- as.data.frame(train[, top_predictor])
-train_expr$group <- train$disease_label
-colnames(train_expr)[1] <- "ZNF443"
-
-test_expr <- as.data.frame(test[, top_predictor])
-test_expr$group <- test$disease_label
-colnames(test_expr)[1] <- "ZNF443"
-
-
-######################### Expr in train data ###############################
-
-train_expr$group <- factor(train_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_train <- ggplot(train_expr, aes(x = group, y = ZNF443, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "ZNF443 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_train <- box_train + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(train_expr$ZNF443) + 0.2
-)
-
-print(box_train)
-ggsave("./results/70-30_split/ZNF443_Gene exp barplot_training_data.png", box_train, dpi = 300, height = 6, width = 8)
-
-
-
-
-######################### Expr in test data ###############################
-
-test_expr$group <- factor(test_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_test <- ggplot(test_expr, aes(x = group, y = ZNF443, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "ZNF443 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_test <- box_test + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(test_expr$ZNF443) + 0.2
-)
-
-print(box_test)
-ggsave("./results/70-30_split/ZNF443_Gene exp barplot_test_data.png", box_test, dpi = 300, height = 6, width = 8)
-
-
-
-
-
-
-
-top_predictor <- "BORCS6"
-
-
-
-train_expr <- as.data.frame(train[, top_predictor])
-train_expr$group <- train$disease_label
-colnames(train_expr)[1] <- "BORCS6"
-
-test_expr <- as.data.frame(test[, top_predictor])
-test_expr$group <- test$disease_label
-colnames(test_expr)[1] <- "BORCS6"
-
-
-######################### Expr in train data ###############################
-
-train_expr$group <- factor(train_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_train <- ggplot(train_expr, aes(x = group, y = BORCS6, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "BORCS6 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_train <- box_train + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(train_expr$BORCS6) + 0.2
-)
-
-print(box_train)
-ggsave("./results/70-30_split/BORCS6_Gene exp barplot_training_data.png", box_train, dpi = 300, height = 6, width = 8)
-
-
-
-
-######################### Expr in test data ###############################
-
-test_expr$group <- factor(test_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_test <- ggplot(test_expr, aes(x = group, y = BORCS6, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "BORCS6 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_test <- box_test + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(test_expr$BORCS6) + 0.2
-)
-
-print(box_test)
-ggsave("./results/70-30_split/BORCS6 exp barplot_test_data.png", box_test, dpi = 300, height = 6, width = 8)
-
-
-
-
-
-
-
-top_predictor <- "RNF208"
-
-
-
-train_expr <- as.data.frame(train[, top_predictor])
-train_expr$group <- train$disease_label
-colnames(train_expr)[1] <- "RNF208"
-
-test_expr <- as.data.frame(test[, top_predictor])
-test_expr$group <- test$disease_label
-colnames(test_expr)[1] <- "RNF208"
-
-
-######################### Expr in train data ###############################
-
-train_expr$group <- factor(train_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_train <- ggplot(train_expr, aes(x = group, y = RNF208, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "RNF208 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_train <- box_train + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(train_expr$RNF208) + 0.2
-)
-
-print(box_train)
-ggsave("./results/70-30_split/RNF208_Gene exp barplot_training_data.png", box_train, dpi = 300, height = 6, width = 8)
-
-
-
-
-######################### Expr in test data ###############################
-
-test_expr$group <- factor(test_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_test <- ggplot(test_expr, aes(x = group, y = RNF208, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "RNF208 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_test <- box_test + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(test_expr$RNF208) + 0.2
-)
-
-print(box_test)
-ggsave("./results/70-30_split/RNF208 exp barplot_test_data.png", box_test, dpi = 300, height = 6, width = 8)
-
-
-
-
-
-top_predictor <- "SDHAF1"
-
-
-
-train_expr <- as.data.frame(train[, top_predictor])
-train_expr$group <- train$disease_label
-colnames(train_expr)[1] <- "SDHAF1"
-
-test_expr <- as.data.frame(test[, top_predictor])
-test_expr$group <- test$disease_label
-colnames(test_expr)[1] <- "SDHAF1"
-
-
-######################### Expr in train data ###############################
-
-train_expr$group <- factor(train_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_train <- ggplot(train_expr, aes(x = group, y = SDHAF1, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "SDHAF1 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_train <- box_train + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(train_expr$SDHAF1) + 0.2
-)
-
-print(box_train)
-ggsave("./results/70-30_split/SDHAF1_Gene exp barplot_training_data.png", box_train, dpi = 300, height = 6, width = 8)
-
-
-
-
-######################### Expr in test data ###############################
-
-test_expr$group <- factor(test_expr$group, levels = c("HP", "IPF"))
-
-# PLot the bar plots with significance levels
-box_test <- ggplot(test_expr, aes(x = group, y = SDHAF1, color = group)) +
-  geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +   # Box outline
-  geom_jitter(width = 0.15, size = 2) +                                    # Dots
-  scale_color_manual(values = c("steelblue", "firebrick")) +               # Custom colors
-  labs(y = "SDHAF1 expression", x = NULL) +
-  theme_classic(base_size = 16) +
-  theme(legend.position = "top")
-# Add significance annotation (t-test)
-box_test <- box_test + stat_compare_means(
-  comparisons = list(c("HP", "IPF")),
-  method = "t.test",
-  label = "p.format",
-  label.y = max(test_expr$SDHAF1) + 0.2
-)
-
-print(box_test)
-ggsave("./results/70-30_split/SDHAF1 exp barplot_test_data.png", box_test, dpi = 300, height = 6, width = 8)
+library(here)
+
+#Create folder to store boxplot figures
+boxplot_dir <- here("results", "Boxplots")
+if (!dir.exists(boxplot_dir)) dir.create(boxplot_dir)
+
+
+#' Create and save a boxplot for a given gene and dataset
+#'
+#' This function generates a boxplot with jittered points and Wilconxon t-test 
+#' significance for a specified gene in a given dataset, and saves the plot 
+#' as a PNG file.
+#'
+#' @param gene Character. Name of the gene to plot.
+#' @param dataset Data frame. Expression data with a column for disease labels
+#'               (train and test datasets can be taken directly from 04_lasso.R)
+#' @param dataset_name Character. Used in the output filename (e.g., "training_data").
+#' @param boxplot_dir Character. Path to the folder where plots will be saved.
+#'
+#' @return Saves a PNG file of the boxplot and prints the plot to the device.
+#'
+#' @examples
+#' plot_gene_boxplot("ZNF443", train, "training_data", "results/Boxplots")
+plot_gene_boxplot <- function(gene, dataset, dataset_name, boxplot_dir) {
+  expr_df <- as.data.frame(dataset[, gene])
+  expr_df$group <- dataset$disease_label
+  colnames(expr_df)[1] <- gene
+  expr_df$group <- factor(expr_df$group, levels = c("HP", "IPF"))
+  
+  p <- ggplot(expr_df, aes(x = group, y = .data[[gene]], color = group)) +
+    geom_boxplot(outlier.shape = NA, width = 0.4, fill = NA, size = 1.2) +
+    geom_jitter(width = 0.15, size = 2) +
+    scale_color_manual(values = c("steelblue", "firebrick")) +
+    labs(y = paste0(gene, " expression"), x = NULL) +
+    theme_classic(base_size = 16) +
+    theme(legend.position = "top") +
+    stat_compare_means(
+      comparisons = list(c("HP", "IPF")),
+      method = "t.test",
+      label = "p.format",
+      label.y = max(expr_df[[gene]]) * 0.2
+    )
+  
+  print(p)
+  
+  ggsave(file.path(boxplot_dir, paste0(gene, "_exp_boxplot_", dataset_name, ".png")),
+         p, dpi = 300, height = 6, width = 8)
+}
+
+# List of genes
+genes <- c("ZNF443", "BORCS6", "RNF208", "SDHAF1")
+
+# Loop over genes for train and test datasets
+for (gene in genes) {
+  plot_gene_boxplot(gene, train, "training_data", boxplot_dir)
+  plot_gene_boxplot(gene, test, "test_data", boxplot_dir)
+}
